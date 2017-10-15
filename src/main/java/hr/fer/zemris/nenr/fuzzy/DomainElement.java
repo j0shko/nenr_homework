@@ -51,7 +51,7 @@ public class DomainElement {
 
     // static methods
 
-    public static DomainElement of(int[] values) {
+    public static DomainElement of(int... values) {
         return new DomainElement(values);
     }
 }
