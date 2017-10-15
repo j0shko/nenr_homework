@@ -29,11 +29,11 @@ public abstract class AbstractDomain implements Domain {
 
     // static methods
 
-    public Domain intRange(int first, int last) {
+    public static Domain intRange(int first, int last) {
         return new SimpleDomain(first, last);
     }
 
-    public Domain combine(Domain first, Domain second) {
+    public static Domain combine(Domain first, Domain second) {
         List<SimpleDomain> domains = new LinkedList<>();
         for (int i = 0, end = first.getNumberOfComponents(); i < end; i++) {
             domains.add((SimpleDomain) first.getComponent(i));
