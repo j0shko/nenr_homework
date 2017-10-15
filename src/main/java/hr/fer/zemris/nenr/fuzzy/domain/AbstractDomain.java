@@ -1,7 +1,5 @@
-package hr.fer.zemris.nenr.fuzzy;
+package hr.fer.zemris.nenr.fuzzy.domain;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 public abstract class AbstractDomain implements Domain {

@@ -1,8 +1,8 @@
-package hr.fer.zemris.nenr.fuzzy.demo;
+package hr.fer.zemris.nenr.fuzzy.domain.demo;
 
-import hr.fer.zemris.nenr.fuzzy.AbstractDomain;
-import hr.fer.zemris.nenr.fuzzy.Domain;
-import hr.fer.zemris.nenr.fuzzy.DomainElement;
+import hr.fer.zemris.nenr.fuzzy.domain.AbstractDomain;
+import hr.fer.zemris.nenr.fuzzy.domain.Domain;
+import hr.fer.zemris.nenr.fuzzy.domain.DomainElement;
 
 public class DomainDemo {
 

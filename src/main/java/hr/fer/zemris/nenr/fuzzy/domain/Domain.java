@@ -1,4 +1,4 @@
-package hr.fer.zemris.nenr.fuzzy;
+package hr.fer.zemris.nenr.fuzzy.domain;
 
 public interface Domain extends Iterable<DomainElement> {
     int getCardinality();
