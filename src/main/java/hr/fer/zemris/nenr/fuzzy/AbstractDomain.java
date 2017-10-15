@@ -1,5 +1,7 @@
 package hr.fer.zemris.nenr.fuzzy;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public abstract class AbstractDomain implements Domain {
@@ -28,10 +30,17 @@ public abstract class AbstractDomain implements Domain {
     // static methods
 
     public Domain intRange(int first, int last) {
-        return null;
+        return new SimpleDomain(first, last);
     }
 
     public Domain combine(Domain first, Domain second) {
-        return null;
+        List<SimpleDomain> domains = new LinkedList<>();
+        for (int i = 0, end = first.getNumberOfComponents(); i < end; i++) {
+            domains.add((SimpleDomain) first.getComponent(i));
+        }
+        for (int i = 0, end = second.getNumberOfComponents(); i < end; i++) {
+            domains.add((SimpleDomain) second.getComponent(i));
+        }
+        return new CompositeDomain((SimpleDomain[]) domains.toArray());
     }
 }
