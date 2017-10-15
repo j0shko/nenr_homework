@@ -35,22 +35,25 @@ public class CompositeDomain extends AbstractDomain {
 
         for (int i = 0; i < compCount; i++) {
             valuesFirst[i] = components[i].getFirst();
-            valuesLast[i] = components[i].getLast();
+            valuesLast[i] = components[i].getLast() - 1;
         }
 
         return new Iterator<>() {
             int[] next = valuesFirst;
+            boolean hasNext = true;
 
             @Override
             public boolean hasNext() {
-                return !Arrays.equals(next, valuesLast);
+                return hasNext;
             }
 
             @Override
             public DomainElement next() {
                 DomainElement element = new DomainElement(next);
+                hasNext = !Arrays.equals(next, valuesLast);
+                if (!hasNext) return element;
 
-                for (int i = compCount; i >= 0; i--) {
+                for (int i = compCount - 1; i >= 0; i--) {
                     if (next[i] + 1 >= components[i].getLast()) {
                         next[i] = components[i].getFirst();
                     } else {

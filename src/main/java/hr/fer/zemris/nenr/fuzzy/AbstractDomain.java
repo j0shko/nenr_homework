@@ -23,6 +23,7 @@ public abstract class AbstractDomain implements Domain {
             if (i == index) {
                 return element;
             }
+            i++;
         }
         throw new IndexOutOfBoundsException();
     }
@@ -34,13 +35,16 @@ public abstract class AbstractDomain implements Domain {
     }
 
     public static Domain combine(Domain first, Domain second) {
-        List<SimpleDomain> domains = new LinkedList<>();
+        SimpleDomain[] domains = new SimpleDomain[first.getNumberOfComponents() + second.getNumberOfComponents()];
+        int j = 0;
         for (int i = 0, end = first.getNumberOfComponents(); i < end; i++) {
-            domains.add((SimpleDomain) first.getComponent(i));
+            domains[j] = (SimpleDomain) first.getComponent(i);
+            j++;
         }
         for (int i = 0, end = second.getNumberOfComponents(); i < end; i++) {
-            domains.add((SimpleDomain) second.getComponent(i));
+            domains[j] = (SimpleDomain) second.getComponent(i);
+            j++;
         }
-        return new CompositeDomain((SimpleDomain[]) domains.toArray());
+        return new CompositeDomain(domains);
     }
 }

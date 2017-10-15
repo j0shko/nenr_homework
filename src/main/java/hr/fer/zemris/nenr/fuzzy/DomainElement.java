@@ -37,6 +37,7 @@ public class DomainElement {
 
     @Override
     public String toString() {
+        if (this.values.length == 1) return Integer.toString(this.values[0]);
         StringBuilder sb = new StringBuilder();
         sb.append('(');
         for (int i = 0; i < this.values.length; i++) {
