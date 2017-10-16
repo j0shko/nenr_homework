@@ -2,7 +2,9 @@ package hr.fer.zemris.nenr.fuzzy.domain;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 public class CompositeDomain extends AbstractDomain {
 
@@ -55,41 +57,47 @@ public class CompositeDomain extends AbstractDomain {
 
     @Override
     public Iterator<DomainElement> iterator() {
-        int compCount = getNumberOfComponents();
-        int[] valuesFirst = new int[compCount];
-        int[] valuesLast = new int[compCount];
+        return new CompositeIterator();
+    }
 
-        for (int i = 0; i < compCount; i++) {
-            valuesFirst[i] = components[i].getFirst();
-            valuesLast[i] = components[i].getLast() - 1;
+    private class CompositeIterator implements Iterator<DomainElement> {
+
+        private List<Iterator<DomainElement>> iterators;
+        private boolean init = false;
+        private int[] last;
+
+        CompositeIterator() {
+            iterators = Arrays.stream(components).map(SimpleDomain::iterator).collect(Collectors.toList());
         }
 
+        @Override
+        public boolean hasNext() {
+            return iterators.stream().map(Iterator::hasNext).reduce(false, (acc, it) -> acc || it);
+        }
 
-        return new Iterator<>() { //java 9 feature yay
-            int[] next = valuesFirst;
-            boolean hasNext = true;
-
-            @Override
-            public boolean hasNext() {
-                return hasNext;
-            }
-
-            @Override
-            public DomainElement next() {
-                DomainElement element = new DomainElement(next);
-                hasNext = !Arrays.equals(next, valuesLast);
-                if (!hasNext) return element;
-
-                for (int i = compCount - 1; i >= 0; i--) {
-                    if (next[i] + 1 >= components[i].getLast()) {
-                        next[i] = components[i].getFirst();
-                    } else {
-                        next[i]++;
-                        return element;
-                    }
+        @Override
+        public DomainElement next() {
+            if (!init) {
+                init = true;
+                last = new int[components.length];
+                for (int i = 0; i < components.length; i++) {
+                    last[i] = iterators.get(i).next().getComponentValue(0);
                 }
-                throw new NoSuchElementException();
+                return new DomainElement(last);
             }
-        };
+
+            for (int i = iterators.size() - 1; i >= 0; i--) {
+                Iterator<DomainElement> iterator = iterators.get(i);
+                if (!iterators.get(i).hasNext()) {
+                    Iterator<DomainElement> newIterator = components[i].iterator();
+                    iterators.set(i, newIterator);
+                    last[i] = newIterator.next().getComponentValue(0);
+                } else {
+                    last[i] = iterator.next().getComponentValue(0);
+                    return new DomainElement(last);
+                }
+            }
+            throw new NoSuchElementException();
+        }
     }
 }
