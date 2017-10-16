@@ -24,7 +24,11 @@ public class FuzzySetDemo {
         Domain d2 = AbstractDomain.intRange(-5, 6);
         FuzzySet set2 = new CalculatedFuzzySet(
                 d2,
-                StandardFuzzySets.lambdaFunction(-4, 0, 4)
+                StandardFuzzySets.lambdaFunction(
+                        d2.indexOfElement(DomainElement.of(-4)),
+                        d2.indexOfElement(DomainElement.of( 0)),
+                        d2.indexOfElement(DomainElement.of( 4))
+                )
         );
         set2.print("Set2 : ");
 

@@ -33,8 +33,18 @@ public class SimpleDomain extends AbstractDomain {
         return last;
     }
 
+    @Override
+    public int indexOfElement(DomainElement element) {
+        return element.getComponentValue(0) - first;
+    }
+
+    @Override
+    public DomainElement elementForIndex(int index) {
+        return DomainElement.of(first + index);
+    }
+
     public Iterator<DomainElement> iterator() {
-        return new Iterator<>() {
+        return new Iterator<>() { //java 9 feature yay
             int next = first;
 
             public boolean hasNext() {

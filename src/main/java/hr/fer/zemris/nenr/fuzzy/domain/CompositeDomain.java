@@ -28,6 +28,32 @@ public class CompositeDomain extends AbstractDomain {
     }
 
     @Override
+    public DomainElement elementForIndex(int index) {
+        int[] values = new int[components.length];
+        int j = index;
+        for (int i = components.length - 1; i > 0; i--) {
+            int currentComponentIndex = j % components[i].getCardinality();
+            values[i] = components[i].elementForIndex(currentComponentIndex).getComponentValue(0);
+            j = (j - currentComponentIndex) / components[i].getCardinality();
+        }
+        values[0] = components[0].elementForIndex(j).getComponentValue(0);
+        return new DomainElement(values);
+    }
+
+    @Override
+    public int indexOfElement(DomainElement element) {
+        int index = 0;
+        for (int i = 0; i < components.length - 1; i++) {
+            index += components[i].indexOfElement(DomainElement.of(element.getComponentValue(i)));
+            index *= components[i + 1].getCardinality();
+        }
+        index += components[components.length - 1].indexOfElement(
+                DomainElement.of(element.getComponentValue(element.getNumberOfComponents() - 1))
+        );
+        return index;
+    }
+
+    @Override
     public Iterator<DomainElement> iterator() {
         int compCount = getNumberOfComponents();
         int[] valuesFirst = new int[compCount];
@@ -38,7 +64,8 @@ public class CompositeDomain extends AbstractDomain {
             valuesLast[i] = components[i].getLast() - 1;
         }
 
-        return new Iterator<>() {
+
+        return new Iterator<>() { //java 9 feature yay
             int[] next = valuesFirst;
             boolean hasNext = true;
 
