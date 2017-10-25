@@ -22,7 +22,14 @@ public class Relations {
     }
 
     public static boolean isReflexive(FuzzySet fuzzySet) {
-        return false;
+        if (!isUtimesURelation(fuzzySet)) return false;
+
+        for (DomainElement element : fuzzySet.getDomain()) {
+            if (element.getComponentValue(0) == element.getComponentValue(1) && fuzzySet.getValueAt(element) != 1) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static boolean isMaxMinTransitive(FuzzySet fuzzySet) {
