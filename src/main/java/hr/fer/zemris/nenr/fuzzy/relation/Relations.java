@@ -1,8 +1,10 @@
 package hr.fer.zemris.nenr.fuzzy.relation;
 
+import hr.fer.zemris.nenr.fuzzy.domain.AbstractDomain;
 import hr.fer.zemris.nenr.fuzzy.domain.Domain;
 import hr.fer.zemris.nenr.fuzzy.domain.DomainElement;
 import hr.fer.zemris.nenr.fuzzy.set.FuzzySet;
+import hr.fer.zemris.nenr.fuzzy.set.MutableFuzzySet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +56,25 @@ public class Relations {
     }
 
     public static FuzzySet compositionOfBinaryRelations(FuzzySet first, FuzzySet second) {
-        return null;
+        Domain u = first.getDomain().getComponent(0);
+        Domain v = first.getDomain().getComponent(1);
+        Domain w = second.getDomain().getComponent(1);
+
+        Domain uw = AbstractDomain.combine(u, w);
+
+        MutableFuzzySet fuzzySet = new MutableFuzzySet(uw);
+
+        for (DomainElement element : fuzzySet.getDomain()) {
+            List<Double> mins = new ArrayList<>();
+            for (DomainElement vElement : v) {
+                DomainElement firstMiddle = DomainElement.of(element.getComponentValue(0), vElement.getComponentValue(0));
+                DomainElement secondMiddle = DomainElement.of(vElement.getComponentValue(0), element.getComponentValue(1));
+                mins.add(Math.min(first.getValueAt(firstMiddle), second.getValueAt(secondMiddle)));
+            }
+
+            fuzzySet.set(element, mins.stream().max(Double::compareTo).orElse(0.));
+        }
+        return fuzzySet;
     }
 
     public static boolean isFuzzyEquivalence(FuzzySet fuzzySet) {
