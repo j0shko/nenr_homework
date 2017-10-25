@@ -78,7 +78,7 @@ public class Relations {
     }
 
     public static boolean isFuzzyEquivalence(FuzzySet fuzzySet) {
-        return false;
+        return isSymmetric(fuzzySet) && isReflexive(fuzzySet) && isMaxMinTransitive(fuzzySet);
     }
 
     public static boolean isUtimesURelation(FuzzySet fuzzySet) {
