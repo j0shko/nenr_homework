@@ -2,6 +2,7 @@ package hr.fer.zemris.nenr.fuzzy.domain;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class SimpleDomain extends AbstractDomain {
 
@@ -58,5 +59,18 @@ public class SimpleDomain extends AbstractDomain {
                 return element;
             }
         };
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimpleDomain that = (SimpleDomain) o;
+        return first == that.first && last == that.last;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(first, last);
     }
 }

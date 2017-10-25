@@ -1,12 +1,24 @@
 package hr.fer.zemris.nenr.fuzzy.relation;
 
 import hr.fer.zemris.nenr.fuzzy.domain.Domain;
+import hr.fer.zemris.nenr.fuzzy.domain.DomainElement;
 import hr.fer.zemris.nenr.fuzzy.set.FuzzySet;
 
 public class Relations {
 
     public static boolean isSymmetric(FuzzySet fuzzySet) {
-        return false;
+        if (!isUtimesURelation(fuzzySet)) return false;
+
+        Domain domain = fuzzySet.getDomain();
+
+        for (DomainElement element : domain) {
+            DomainElement reverse = DomainElement.of(element.getComponentValue(1), element.getComponentValue(0));
+            if (fuzzySet.getValueAt(element) - fuzzySet.getValueAt(reverse) > 0.001) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static boolean isReflexive(FuzzySet fuzzySet) {
@@ -31,14 +43,6 @@ public class Relations {
 
         Domain component1 = domain.getComponent(0);
         Domain component2 = domain.getComponent(1);
-        if (component1.getCardinality() != component2.getCardinality()) return false;
-
-        for (int i = 0, end = component1.getCardinality(); i < end; i++) {
-            if (!component1.elementForIndex(i).equals(component2.elementForIndex(i))) {
-                return false;
-            }
-        }
-
-        return true;
+        return component1.equals(component2);
     }
 }
