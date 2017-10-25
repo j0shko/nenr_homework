@@ -4,6 +4,9 @@ import hr.fer.zemris.nenr.fuzzy.domain.Domain;
 import hr.fer.zemris.nenr.fuzzy.domain.DomainElement;
 import hr.fer.zemris.nenr.fuzzy.set.FuzzySet;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Relations {
 
     public static boolean isSymmetric(FuzzySet fuzzySet) {
@@ -33,7 +36,21 @@ public class Relations {
     }
 
     public static boolean isMaxMinTransitive(FuzzySet fuzzySet) {
-        return false;
+        if (!isUtimesURelation(fuzzySet)) return false;
+
+        Domain u = fuzzySet.getDomain().getComponent(0);
+        for (DomainElement element : fuzzySet.getDomain()) {
+            List<Double> mins = new ArrayList<>();
+            for (DomainElement uElement : u) {
+                DomainElement firstMiddle = DomainElement.of(element.getComponentValue(0), uElement.getComponentValue(0));
+                DomainElement secondMiddle = DomainElement.of(uElement.getComponentValue(0), element.getComponentValue(1));
+                mins.add(Math.min(fuzzySet.getValueAt(firstMiddle), fuzzySet.getValueAt(secondMiddle)));
+            }
+            if (fuzzySet.getValueAt(element) < mins.stream().max(Double::compareTo).orElse(0.))
+                return false;
+        }
+
+        return true;
     }
 
     public static FuzzySet compositionOfBinaryRelations(FuzzySet first, FuzzySet second) {
