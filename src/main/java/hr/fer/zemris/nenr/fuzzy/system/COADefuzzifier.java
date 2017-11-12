@@ -5,9 +5,8 @@ import hr.fer.zemris.nenr.fuzzy.set.FuzzySet;
 
 public class COADefuzzifier implements Defuzzifier {
 
-
     @Override
-    public double defuzzify(FuzzySet fuzzySet) {
+    public int defuzzify(FuzzySet fuzzySet) {
         double valueElementSum = 0;
         double valueSum = 0;
 
@@ -17,6 +16,6 @@ public class COADefuzzifier implements Defuzzifier {
             valueSum += value;
         }
 
-        return valueElementSum / valueSum;
+        return (int) (valueElementSum / valueSum);
     }
 }

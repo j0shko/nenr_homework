@@ -12,8 +12,8 @@ public class BoatTask {
 
         Defuzzifier def = new COADefuzzifier();
 
-        FuzzySystem fsAkcel = new AkcelFuzzySystemMin(def);
-        FuzzySystem fsKormilo = new KormiloFuzzySystemMin(def);
+        FuzzySystem fsAkcel = new AkcelFuzzySystem(def);
+        FuzzySystem fsKormilo = new KormiloFuzzySystem(def);
 
         Scanner inScanner = new Scanner(System.in);
         while(true) {
