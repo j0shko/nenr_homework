@@ -24,8 +24,8 @@ public class BoatTask {
             int A = fsAkcel.conclude(in.L, in.D, in.LK, in.DK, in.V, in.S);
             int K = fsKormilo.conclude(in.L, in.D, in.LK, in.DK, in.V, in.S);
 
-            System.out.print(A + " " + K);
-            System.out.flush();;
+            System.out.println(A + " " + K);
+            System.out.flush();
         }
     }
 
