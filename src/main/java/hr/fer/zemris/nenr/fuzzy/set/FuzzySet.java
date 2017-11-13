@@ -43,14 +43,48 @@ public interface FuzzySet {
         };
     }
 
-    default void print(String headerMessage) {
+    default void print(String headerMessage, boolean smart) {
         if (headerMessage != null) {
             System.out.println(headerMessage);
         }
 
-        for (DomainElement element : getDomain()) {
-            System.out.println("d(" + element + ") = " + getValueAt(element));
+        if (!smart) {
+            for (DomainElement element : getDomain()) {
+                System.out.println("d(" + element + ") = " + getValueAt(element));
+            }
+        } else {
+            DomainElement lastZero = null;
+            DomainElement last = null;
+            for (DomainElement element : getDomain()) {
+                double value = getValueAt(element);
+                if (value == 0.) {
+                    if (lastZero == null) {
+                        lastZero = element;
+                    }
+                } else {
+                    if (last != null && last.equals(lastZero)) {
+                        System.out.println("d(" + last + ") = 0" );
+                    }
+                    if (lastZero != null) {
+                        System.out.println("d(" + lastZero + ") - d(" + last + ") = 0");
+                        lastZero = null;
+                    }
+                    System.out.println("d(" + element + ") = " + value);
+                }
+                last = element;
+            }
+            if (getValueAt(last) == 0.0) {
+                if (lastZero != null) {
+                    System.out.println("d(" + lastZero + ") - d(" + last + ") = 0");
+                } else {
+                    System.out.println("d(" + last + ") = 0");
+                }
+            }
         }
         System.out.println();
+    }
+
+    default void print(String headerMessage) {
+        print(headerMessage, false);
     }
 }

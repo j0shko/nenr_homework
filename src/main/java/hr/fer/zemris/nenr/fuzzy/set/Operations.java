@@ -20,6 +20,10 @@ public class Operations {
         return Math::max;
     }
 
+    public static BinaryOperator<Double> algebaricProduct() {
+        return (x, y) -> x * y;
+    }
+
     public static BinaryOperator<Double> hamacherTNorm(double v) {
         return (x, y) -> (x * y) / v + (1 - v) * (x + y - x * y);
     }

@@ -7,6 +7,10 @@ import hr.fer.zemris.nenr.fuzzy.set.IdentityFuzzySet;
 
 public interface BoatUtils {
 
+    static Domain accelerationDomain() {
+        return AbstractDomain.intRange(-100, 101);
+    }
+
     static Domain angleDomain() {
         return AbstractDomain.intRange(-90, 91);
     }

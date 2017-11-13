@@ -13,6 +13,9 @@ public class RuleBase {
     private BinaryOperator<Double> tNorm;
     private BinaryOperator<Double> implication;
 
+    private String desc;
+
+
     public RuleBase(BinaryOperator<Double> sNorm, BinaryOperator<Double> tNorm, BinaryOperator<Double> implication) {
         this.rules = new ArrayList<>();
         this.sNorm = sNorm;
@@ -25,6 +28,10 @@ public class RuleBase {
         return this;
     }
 
+    public Rule getRule(int index) {
+        return this.rules.get(index);
+    }
+
     public FuzzySet conclude(int... vars) {
         FuzzySet conclusion = rules.get(0).conclude(vars);
 
@@ -32,5 +39,13 @@ public class RuleBase {
             conclusion = conclusion.binaryOperation(rules.get(i).conclude(vars), sNorm);
         }
         return conclusion;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getDesc() {
+        return desc;
     }
 }
