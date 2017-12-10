@@ -3,7 +3,7 @@ package hr.fer.zemris.nenr.genetic;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class RouletteWheelSelection implements SelectionStrategy {
+public class RouletteWheelSelection implements ParentSelectionStrategy {
   @Override
   public List<Chromosome> select(List<Chromosome> chromosomes, float crossoverRatio) {
     double fitnessSum = chromosomes.stream().mapToDouble(Chromosome::getFitness).sum();
@@ -39,7 +39,7 @@ public class RouletteWheelSelection implements SelectionStrategy {
     T entry;
     double probabilityMargin;
 
-    public ProbabilityEntry(T entry, double probabilityMargin) {
+    ProbabilityEntry(T entry, double probabilityMargin) {
       this.entry = entry;
       this.probabilityMargin = probabilityMargin;
     }
