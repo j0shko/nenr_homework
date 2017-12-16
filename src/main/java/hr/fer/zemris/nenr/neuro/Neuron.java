@@ -21,6 +21,14 @@ public class Neuron {
         this(new double[size]);
     }
 
+    public double[] getW() {
+        return w;
+    }
+
+    public void setW(double[] w) {
+        this.w = w;
+    }
+
     public double calc(double[] input) {
         if (input.length != w.length) throw new IllegalArgumentException("Input not the same size as weights");
         double sum = 0;
