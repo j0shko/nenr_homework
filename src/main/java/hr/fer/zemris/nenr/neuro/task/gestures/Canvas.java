@@ -52,7 +52,7 @@ public class Canvas extends JPanel implements MouseListener, MouseMotionListener
             Point last = points.get(0);
             for (int i = 1; i < points.size(); ++i) {
                 Point cur = points.get(i);
-                g.drawLine(last.x, last.y, cur.x, cur.y);
+                g.drawLine((int) last.x, (int) last.y, (int) cur.x, (int) cur.y);
                 last = cur;
             }
         }

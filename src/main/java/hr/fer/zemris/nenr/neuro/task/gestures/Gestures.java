@@ -8,6 +8,8 @@ import java.util.List;
 public class Gestures extends JFrame {
 
     private static final int EXAMPLE_COUNT = 5;
+    private static final int GESTURE_PART_COUNT = 30;
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new Gestures().setVisible(true));
@@ -38,7 +40,7 @@ public class Gestures extends JFrame {
 
         add = new Button("Add");
         add.addActionListener(e -> {
-            gestures.get(gestureNames.get(gestureIndex)).add(new Gesture(canvas.getPoints()));
+            gestures.get(gestureNames.get(gestureIndex)).add(new Gesture(canvas.getPoints(), GESTURE_PART_COUNT));
             canvas.reset();
             if (counter == EXAMPLE_COUNT - 1) {
                 counter = 0;
@@ -68,6 +70,8 @@ public class Gestures extends JFrame {
     }
 
     private void phaseTwo() {
+        gestures.forEach((key, value) -> value.forEach(gesture -> System.out.println(gesture + "\t" + gestureCode(gestureNames.indexOf(key)))));
+
         footer.remove(add);
 
         Button check = new Button("Check");
@@ -75,5 +79,12 @@ public class Gestures extends JFrame {
         footer.add(check);
 
         label.setText("");
+    }
+
+    private String gestureCode(int index) {
+        double[] values = new double[gestureNames.size()];
+        values[index] = 1;
+        String s = Arrays.toString(values).replaceAll(" ", "");
+        return s.substring(1, s.length() - 1);
     }
 }
