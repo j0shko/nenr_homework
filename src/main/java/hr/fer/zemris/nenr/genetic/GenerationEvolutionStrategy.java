@@ -22,12 +22,12 @@ public class GenerationEvolutionStrategy implements EvolutionStrategy {
 
     @Override
     public List<Chromosome> evolve(List<Chromosome> chromosomes) {
-        List<Chromosome> parents = selectionStrategy.select(chromosomes, crossoverRate);
+        List<Chromosome> parents = new ArrayList<>(selectionStrategy.select(chromosomes, crossoverRate));
         int populationSize = chromosomes.size();
         List<Chromosome> newPopulation = new ArrayList<>(populationSize);
 
         newPopulation.addAll(bestN(chromosomes, elitismCount));
-        while(newPopulation.size() < populationSize) {
+        while (newPopulation.size() < populationSize) {
             newPopulation.add(parents.get(ran.nextInt(parents.size())).crossover(parents.get(ran.nextInt(parents.size()))));
         }
 

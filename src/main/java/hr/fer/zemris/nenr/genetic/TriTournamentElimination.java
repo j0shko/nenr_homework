@@ -10,7 +10,7 @@ public class TriTournamentElimination implements EliminationMethod {
     public EliminationEvolutionStrategy.Elimination eliminate(List<Chromosome> generation) {
         Set<Chromosome> attendeesSet = new TreeSet<>();
         while (attendeesSet.size() < 3) {
-            attendeesSet.add(generation.get(ran.nextInt() % generation.size()));
+            attendeesSet.add(generation.get(ran.nextInt(generation.size())));
         }
         List<Chromosome> attendeesList = new ArrayList<>(attendeesSet);
         Chromosome firstParent = attendeesList.get(0);
