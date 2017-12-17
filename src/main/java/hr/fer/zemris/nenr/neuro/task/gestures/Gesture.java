@@ -18,6 +18,9 @@ public class Gesture {
     }
 
     private double[] normalize(List<Point> points, int partCount) {
+        if (points.size() == 0) {
+            return new double[]{};
+        }
         double avgX = points.stream().map(p -> p.x).reduce(0., (acc, x) -> acc + x) / points.size();
         double avgY = points.stream().map(p -> p.x).reduce(0., (acc, x) -> acc + x) / points.size();
 
@@ -50,8 +53,15 @@ public class Gesture {
             }
             last = current;
         }
+        while (newPoints.size() < partCount) {
+            newPoints.add(normalized.get(normalized.size() - 1));
+        }
 
         return newPoints.stream().flatMapToDouble(p -> DoubleStream.of(p.x, p.y)).toArray();
+    }
+
+    public double[] getPoints() {
+        return points;
     }
 
     @Override
