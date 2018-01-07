@@ -7,8 +7,6 @@ import java.util.List;
 
 public class Anfis {
 
-    private static final double THRESHOLD = 0.2;
-
     private List<Rule> rules;
 
     public Anfis(int ruleCount) {
@@ -79,50 +77,68 @@ public class Anfis {
         return a * b;
     }
 
-    public void learn(List<Example> examples, double learningRate) {
+    public void learn(List<Example> examples, double learningRate, boolean stochastic, double threshold, int maxIter) {
         double mse;
-        double minmse = 999999;
-        long iter = 0;
+        int iter = 0;
         do {
-            mse = 0;
-            for (Example example : examples) {
-                Result result = this.calcWithDetails(example.x, example.y);
-                double error = example.z - result.output;
-                mse += Math.pow(error, 2);
-
-                for (int i = 0; i < rules.size(); i++) {
-                    Details det = result.details.get(i);
-
-                    double fsum = 0;
-                    for (int j = 0; j < rules.size(); j++) {
-                        Details other = result.details.get(j);
-                        fsum += other.w * (det.f - other.f);
-                    }
-
-                    Rule rule = rules.get(i);
-
-                    double a = rule.a, b = rule.b, c = rule.c, d = rule.d;
-                    double prod1 = learningRate * error * det.w;
-                    double prod2 = prod1 * (fsum / Math.pow(result.sumW, 2));
-
-                    rule.a += 0.01 * prod2 * (1 - det.alfa) * b;
-                    rule.b += 0.01 * prod2 * (1 - det.alfa) * (example.x - a);
-
-                    rule.c += 0.01 * prod2 * (1 - det.beta) * d;
-                    rule.d += 0.01 * prod2 * (1 - det.beta) * (example.y - c);
-
-                    rule.p += prod1 * example.x / result.sumW;
-                    rule.q += prod1 * example.y / result.sumW;
-                    rule.r += prod1 / result.sumW;
+            if (stochastic) {
+                Example example = examples.get(iter % examples.size());
+                calcError(example);
+            } else {
+                for (Example example : examples) {
+                    calcError(example);
                 }
             }
-            mse /= examples.size();
-            if (mse < minmse) {
-                minmse = mse;
-                System.out.println(iter + ": " +minmse);
-            }
+            updateRules(learningRate);
+            mse = mse(examples);
             iter++;
-//            System.out.println("MSE = " + mse);
-        } while (mse > THRESHOLD);
+            System.out.println(iter + ": " + mse);
+        } while (mse > threshold && iter < maxIter);
+    }
+
+    private void calcError(Example example) {
+        Result result = this.calcWithDetails(example.x, example.y);
+        double error = example.z - result.output;
+
+        for (int i = 0; i < rules.size(); i++) {
+            Details det = result.details.get(i);
+
+            double fsum = 0;
+            for (int j = 0; j < rules.size(); j++) {
+                Details other = result.details.get(j);
+                fsum += other.w * (det.f - other.f);
+            }
+
+            Rule rule = rules.get(i);
+
+            double prod1 = error * det.w;
+            double prod2 = prod1 * (fsum / Math.pow(result.sumW, 2));
+
+            rule.dA += 0.01 * prod2 * (1 - det.alfa) * rule.b;
+            rule.dB += 0.01 * prod2 * (1 - det.alfa) * (rule.a - example.x);
+
+            rule.dC += 0.01 * prod2 * (1 - det.beta) * rule.d;
+            rule.dD += 0.01 * prod2 * (1 - det.beta) * (rule.c - example.y);
+
+            rule.dP += prod1 * example.x / result.sumW;
+            rule.dQ += prod1 * example.y / result.sumW;
+            rule.dR += prod1 / result.sumW;
+        }
+    }
+
+    private void updateRules(double learningRate) {
+        for (Rule rule : rules) {
+            rule.update(learningRate);
+        }
+    }
+
+    public double mse(List<Example> examples) {
+        double mse = 0;
+        for (Example example : examples) {
+            double z = this.calc(example.x, example.y);
+            mse += Math.pow(z - example.z, 2);
+        }
+        mse /= 2 * examples.size();
+        return mse;
     }
 }
