@@ -11,9 +11,13 @@ public class Neuron {
     private double delta;
     private double output;
 
+    private double[] dw;
+
     public Neuron(double[] w, ActivationFunction activationFunction) {
         this.w = w;
         this.activationFunction = activationFunction;
+
+        this.dw = new double[w.length];
     }
 
     public Neuron(double[] w) {
@@ -27,6 +31,7 @@ public class Neuron {
         }
         this.w = init;
         this.activationFunction = new SigmoidActivationFunction();
+        this.dw = new double[size];
     }
 
     public double[] getW() {
@@ -49,9 +54,16 @@ public class Neuron {
         return output;
     }
 
-    public void updateWeight(double[] input, double learnRate) {
+    public void updateWeight(double learnRate) {
         for (int i = 0; i < w.length; i++) {
-            w[i] += learnRate * delta * input[i];
+            w[i] += learnRate * dw[i];
+        }
+        dw = new double[w.length];
+    }
+
+    public void updateDeltaW(double[] input) {
+        for (int i = 0; i < w.length; i++) {
+            dw[i] += delta * input[i];
         }
     }
 

@@ -1,7 +1,9 @@
 package hr.fer.zemris.nenr.neuro;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class NeuralNetwork {
 
@@ -44,9 +46,15 @@ public class NeuralNetwork {
             setDeltas(deltas);
         }
 
-        public void updateWeights(double[] input) {
+        public void updateWeights() {
             for (Neuron neuron : neurons) {
-                neuron.updateWeight(input, learningRate);
+                neuron.updateWeight(learningRate);
+            }
+        }
+
+        public void updateDeltaWs(double[] input) {
+            for (Neuron neuron : neurons) {
+                neuron.updateDeltaW(input);
             }
         }
     }
@@ -75,12 +83,14 @@ public class NeuralNetwork {
         return layerInput;
     }
 
-    public void train(double minError, int maxIterations, List<Example> trainSet) {
-        double mse = mse(trainSet);
+    public void train(double minError, int maxIterations, List<List<Example>> trainSet) {
+        List<Example> examples = trainSet.stream().flatMap(Collection::stream) .collect(Collectors.toList());
+        double mse = mse(examples);
         int k = 0;
-        while(mse > minError && k < maxIterations) {
+        while (mse > minError && k < maxIterations) {
             System.out.println("Iter " + (k + 1) + " error " + mse);
-            for (Example example : trainSet) {
+
+            for (Example example : trainSet.get(k % trainSet.size())) {
                 double[] output = calc(example.input);
 
                 // last layer
@@ -102,11 +112,15 @@ public class NeuralNetwork {
                 for (int i = 0; i < layers.size(); i++) {
                     Layer layer = layers.get(i);
                     double[] input = i == 0 ? example.input : layers.get(i - 1).output;
-                    layer.updateWeights(input);
+                    layer.updateDeltaWs(input);
                 }
             }
 
-            mse = mse(trainSet);
+            for (Layer layer : layers) {
+                layer.updateWeights();
+            }
+
+            mse = mse(examples);
             k++;
         }
     }
