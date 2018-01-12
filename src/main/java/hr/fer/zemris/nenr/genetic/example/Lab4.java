@@ -12,14 +12,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Lab4 {
-    private static final boolean ELIMINATION = true;
+    private static final boolean ELIMINATION = false;
     private static final float MUTATION_RATE = 0.1f;
-    private static final float CROSSOVER_RATE = 0.3f;
     private static final int POPULATION_SIZE = 20;
     private static final int ELITISM_RATE = 1;
 
     public static void main(String[] args) throws IOException {
-        Path examplesPath = Paths.get("./geneticExamples/examples1.txt");
+        Path examplesPath = Paths.get("./geneticExamples/examples2.txt");
         List<List<Float>> examples = new ArrayList<>();
         List<String> lines = Files.readAllLines(examplesPath);
         for (String line: lines) {
@@ -28,7 +27,7 @@ public class Lab4 {
 
         ProblemDefinition problem = new ParameterProblemDefinition(-4f, 4f, 5, function(), examples);
         GeneticProblemSolver ga = new GeneticProblemSolver(POPULATION_SIZE, getEvolutionStrategy(), problem);
-        ga.evolve(10_000);
+        ga.evolve(20_000);
 
         ParameterProblemDefinition.ParameterChromosome result = (ParameterProblemDefinition.ParameterChromosome) ga.getBestInCurrentPopulation();
         System.out.println("Resulting betas: " + result);
@@ -43,15 +42,15 @@ public class Lab4 {
             float x = parameters.get(0);
             float y = parameters.get(1);
 
-            return (float) (Math.sin(betas[0] + betas[1] * x) + betas[2] * Math.cos(x * (betas[3] + y)) * (1 / (1 + Math.pow(Math.E, Math.pow(x - betas[4], 2)))));
+            return (float) (Math.sin(betas[0] + betas[1] * x) + betas[2] * Math.cos(x * (betas[3] + y)) * (1 / (1 + Math.exp(Math.pow(x - betas[4], 2)))));
         });
     }
 
     public static EvolutionStrategy getEvolutionStrategy() {
         if (ELIMINATION) {
-            return new EliminationEvolutionStrategy(MUTATION_RATE, new TriTournamentElimination());
+            return new EliminationEvolutionStrategy(MUTATION_RATE, new TriTournamentElimination(new RouletteWheelSelection()));
         } else {
-            return new GenerationEvolutionStrategy(new BasicSelectionMethod(), MUTATION_RATE, CROSSOVER_RATE, ELITISM_RATE);
+            return new GenerationEvolutionStrategy(new RouletteWheelSelection(), MUTATION_RATE, ELITISM_RATE);
         }
     }
 }

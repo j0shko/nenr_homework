@@ -10,36 +10,33 @@ public class GenerationEvolutionStrategy implements EvolutionStrategy {
 
     private ParentSelectionStrategy selectionStrategy;
     private float mutationRate;
-    private float crossoverRate;
     private int elitismCount;
 
-    public GenerationEvolutionStrategy(ParentSelectionStrategy selectionStrategy, float mutationRate, float crossoverRate, int elitismCount) {
+    public GenerationEvolutionStrategy(ParentSelectionStrategy selectionStrategy, float mutationRate, int elitismCount) {
         this.selectionStrategy = selectionStrategy;
         this.mutationRate = mutationRate;
-        this.crossoverRate = crossoverRate;
         this.elitismCount = elitismCount;
     }
 
     @Override
     public List<Chromosome> evolve(List<Chromosome> chromosomes) {
-        List<Chromosome> parents = new ArrayList<>(selectionStrategy.select(chromosomes, crossoverRate));
         int populationSize = chromosomes.size();
         List<Chromosome> newPopulation = new ArrayList<>(populationSize);
 
+        Collections.sort(chromosomes);
         newPopulation.addAll(bestN(chromosomes, elitismCount));
         while (newPopulation.size() < populationSize) {
-            newPopulation.add(parents.get(ran.nextInt(parents.size())).crossover(parents.get(ran.nextInt(parents.size()))));
-        }
-
-        for (Chromosome chromosome : newPopulation) {
-            chromosome.mutate(mutationRate);
+            Chromosome parent1 = selectionStrategy.select(chromosomes);
+            Chromosome parent2 = selectionStrategy.select(chromosomes);
+            Chromosome child = parent1.crossover(parent2);
+            child.mutate(mutationRate);
+            newPopulation.add(child);
         }
 
         return newPopulation;
     }
 
     private static List<Chromosome> bestN(List<Chromosome> chromosomeList, int count) {
-        Collections.sort(chromosomeList);
         return chromosomeList.subList(0, count);
     }
 }

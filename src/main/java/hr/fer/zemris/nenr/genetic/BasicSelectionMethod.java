@@ -1,10 +1,13 @@
 package hr.fer.zemris.nenr.genetic;
 
 import java.util.List;
+import java.util.Random;
 
 public class BasicSelectionMethod implements ParentSelectionStrategy {
-  @Override
-  public List<Chromosome> select(List<Chromosome> chromosomes, float crossoverRatio) {
-    return chromosomes.subList(0, Math.round(chromosomes.size() * crossoverRatio));
-  }
+
+    @Override
+    public Chromosome select(List<Chromosome> chromosomes) {
+        Random rand = new Random();
+        return chromosomes.get(rand.nextInt(chromosomes.size()));
+    }
 }

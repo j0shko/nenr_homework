@@ -19,29 +19,33 @@ public class ParameterProblemDefinition implements ProblemDefinition {
     public class ParameterChromosome implements Chromosome {
 
         private float[] betas;
+        private double fitness;
 
         public ParameterChromosome(float[] betas) {
             this.betas = betas;
+            this.fitness = calcFitness();
         }
 
         @Override
         public Chromosome crossover(Chromosome other) {
             float[] childBetas = new float[betas.length];
             for (int i = 0; i < betas.length; i++) {
-                childBetas[i] = (betas[i] + ((ParameterChromosome) other).betas[i]) / 2;
+                childBetas[i] = ran.nextBoolean() ? betas[i] : ((ParameterChromosome) other).betas[i];
             }
             return new ParameterChromosome(childBetas);
         }
 
         @Override
         public void mutate(float mutationRate) {
-            if (ran.nextFloat() <= mutationRate) {
-                int i = ran.nextInt(betas.length);
-                betas[i] = clamp((float) (betas[i] + (ran.nextBoolean() ? 1 : -1) * 0.2 * (parameterMax - parameterMin)), parameterMin, parameterMax);
+            for (int i = 0; i < betas.length; i++) {
+                if (ran.nextFloat() <= mutationRate) {
+                    betas[i] = clamp(betas[i] + (float) ran.nextGaussian(), parameterMin, parameterMax);
+                }
             }
+            fitness = calcFitness();
         }
 
-        private float clamp(float start, float end, float value) {
+        private float clamp(float value, float start, float end) {
             if (value < start) return start;
             if (value > end) return end;
             return value;
@@ -49,8 +53,12 @@ public class ParameterProblemDefinition implements ProblemDefinition {
 
         @Override
         public double getFitness() {
-            float error = getMeanSquareError();
-            if (error == 0) return 0;
+            return fitness;
+        }
+
+        private double calcFitness() {
+            double error = getMeanSquareError();
+            if (error == 0) return 999999999;
             return 1 / error;
         }
 

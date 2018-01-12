@@ -9,6 +9,6 @@ public interface Chromosome extends Comparable<Chromosome> {
 
   @Override
   default int compareTo(Chromosome o) {
-    return -1* Double.compare(this.getFitness(), o.getFitness());
+    return -1 * Double.compare(this.getFitness(), o.getFitness());
   }
 }

@@ -32,6 +32,7 @@ public class GeneticProblemSolver {
 
     for (int i = 0; i < generationCount; i++) {
       currentPopulation = evolutionStrategy.evolve(currentPopulation);
+      System.out.println(i + ": " + 1 / getBestInCurrentPopulation().getFitness());
     }
   }
 
