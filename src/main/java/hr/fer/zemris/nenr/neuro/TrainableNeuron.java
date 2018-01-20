@@ -2,7 +2,7 @@ package hr.fer.zemris.nenr.neuro;
 
 import java.util.Random;
 
-public class Neuron {
+public class TrainableNeuron {
     public static final Random rand = new Random();
 
     private double[] w;
@@ -13,18 +13,18 @@ public class Neuron {
 
     private double[] dw;
 
-    public Neuron(double[] w, ActivationFunction activationFunction) {
+    public TrainableNeuron(double[] w, ActivationFunction activationFunction) {
         this.w = w;
         this.activationFunction = activationFunction;
 
         this.dw = new double[w.length];
     }
 
-    public Neuron(double[] w) {
+    public TrainableNeuron(double[] w) {
         this(w, new SigmoidActivationFunction());
     }
 
-    public Neuron(int size) {
+    public TrainableNeuron(int size) {
         double[] init = new double[size];
         for (int i = 0; i < size; i++) {
             init[i] = rand.nextDouble() * 4 - 2;

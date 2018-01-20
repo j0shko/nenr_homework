@@ -8,20 +8,20 @@ import java.util.stream.Collectors;
 public class NeuralNetwork {
 
     public class Layer {
-        private List<Neuron> neurons;
+        private List<TrainableNeuron> neurons;
         private double[] output;
 
         public Layer(int neuronCount, int weightCount) {
             this.neurons = new ArrayList<>(neuronCount);
             for (int i = 0; i < neuronCount; i++) {
-                this.neurons.add(new Neuron(weightCount));
+                this.neurons.add(new TrainableNeuron(weightCount));
             }
         }
 
         public double[] calc(double[] input) {
             double[] result = new double[neurons.size()];
             for (int i = 0; i < neurons.size(); i++) {
-                Neuron neuron = neurons.get(i);
+                TrainableNeuron neuron = neurons.get(i);
                 result[i] = neuron.calc(input);
             }
             this.output = result;
@@ -38,7 +38,7 @@ public class NeuralNetwork {
             double[] deltas = new double[neurons.size()];
             for (int j = 0; j < neurons.size(); j++) {
                 double error = 0;
-                for (Neuron neuron : next.neurons) {
+                for (TrainableNeuron neuron : next.neurons) {
                     error += neuron.getW()[j] * neuron.getDelta();
                 }
                 deltas[j] = error * f.calcDerivation(neurons.get(j).getOutput());
@@ -47,13 +47,13 @@ public class NeuralNetwork {
         }
 
         public void updateWeights() {
-            for (Neuron neuron : neurons) {
+            for (TrainableNeuron neuron : neurons) {
                 neuron.updateWeight(learningRate);
             }
         }
 
         public void updateDeltaWs(double[] input) {
-            for (Neuron neuron : neurons) {
+            for (TrainableNeuron neuron : neurons) {
                 neuron.updateDeltaW(input);
             }
         }
