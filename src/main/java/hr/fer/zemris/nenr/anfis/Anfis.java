@@ -8,12 +8,14 @@ import java.util.List;
 public class Anfis {
 
     private List<Rule> rules;
+    private String mses;
 
     public Anfis(int ruleCount) {
         rules = new ArrayList<>();
         for (int i = 0; i < ruleCount; i++) {
             rules.add(new Rule());
         }
+        mses = "";
     }
 
     public double calc(double x, double y) {
@@ -78,6 +80,7 @@ public class Anfis {
     }
 
     public void learn(List<Example> examples, double learningRate, boolean stochastic, double threshold, int maxIter) {
+        StringBuilder mses = new StringBuilder();
         double mse;
         int iter = 0;
         do {
@@ -91,9 +94,11 @@ public class Anfis {
             }
             updateRules(learningRate);
             mse = mse(examples);
+            mses.append(mse).append("\n");
             iter++;
             System.out.println(iter + ": " + mse);
         } while (mse > threshold && iter < maxIter);
+        this.mses = mses.toString();
     }
 
     private void calcError(Example example) {
@@ -140,5 +145,17 @@ public class Anfis {
         }
         mse /= 2 * examples.size();
         return mse;
+    }
+
+    public String getRules() {
+        StringBuilder s = new StringBuilder();
+        for (Rule r : rules) {
+            s.append(String.format("%f %f %f %f %f %f %f\n", r.a, r.b, r.c, r.d, r.p, r.q, r.r));
+        }
+        return s.toString();
+    }
+
+    public String getMses() {
+        return mses;
     }
 }
