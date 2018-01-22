@@ -26,6 +26,10 @@ public class NeuralNetwork {
             return neurons.size();
         }
 
+        public List<Neuron> getNeurons() {
+            return neurons;
+        }
+
         @Override
         public Iterator<Neuron> iterator() {
             return neurons.iterator();
@@ -85,5 +89,9 @@ public class NeuralNetwork {
     public double[] calc(double[] params, double[] input) {
         setParams(params);
         return calc(input);
+    }
+
+    public List<Layer> getLayers() {
+        return layers;
     }
 }
